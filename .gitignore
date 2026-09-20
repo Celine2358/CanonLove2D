@@ -39,3 +39,16 @@ luac.out
 *.x86_64
 *.hex
 
+# LÖVE build output
+*.love
+
+# Distribution
+dist/
+build/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

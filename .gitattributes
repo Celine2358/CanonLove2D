@@ -1,2 +1,13 @@
-# Auto detect text files and perform LF normalization
 * text=auto
+
+*.lua  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ttf binary
+*.ogg binary
+*.mp3 binary
+*.wav binary

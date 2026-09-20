@@ -1,0 +1,34 @@
+{
+    "version": "2.0.0",
+
+    "tasks": [
+        {
+            "label": "Run CanonLove2D",
+
+            "type": "shell",
+
+            "command": "C:\\Users\\pc\\LOVE\\love.exe"
+
+            "args": [
+                "${workspaceFolder}"
+            ],
+
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+
+            "problemMatcher": [],
+
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            }
+        }
+    ]
+}

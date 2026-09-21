@@ -7,7 +7,7 @@
 
             "type": "shell",
 
-            "command": "C:\\Users\\pc\\LOVE\\love.exe"
+            "command": "C:\\Users\\pc\\LOVE\\love.exe",
 
             "args": [
                 "${workspaceFolder}"

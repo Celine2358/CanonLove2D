@@ -1,3 +1,4 @@
+-- canon.lua
 local Animation = require("src.animation")
 
 -- 카논 객체 생성
@@ -37,6 +38,14 @@ function Canon.new(startX, startY)
     self.maxMp = 100
     self.mp = 100
     self.mpRegen = 5
+
+    -- Combat Stats
+    -- 기본 마력 10
+    self.magicPower = 10
+
+    -- 기본 크리티컬 확률 20%, 크리티컬 데미지 50%
+    self.critChance = 0.20
+    self.critDamageBonus = 0.50
 
     -- 땅의 마법: Pebble Shot 세팅
     self.pebble = {
@@ -107,7 +116,8 @@ function Canon.new(startX, startY)
     self.pebbleSpawned = false
 
     -- Rendering, 원본은 268x268 사이즈
-    self.spriteScale = 0.7
+    -- 원본의 54% 크기
+    self.spriteScale = 0.54
 
     return self
 end
@@ -170,6 +180,24 @@ function Canon:startPebbleCast()
     self:setAnimation("magic")
 
     return true
+end
+
+-- 페블 샷 데미지 계산 함수
+function Canon:rollPebbleDamage()
+    -- 기본 마력의 90%~110% 랜덤
+    local multiplier = love.math.random(90, 110) / 100
+    local damage = self.magicPower * multiplier
+    
+    -- 크리티컬 판정
+    local isCritical = love.math.random() < self.critChance
+
+    if isCritical then
+        damage = damage * (1 + self.critDamageBonus)
+    end
+
+    damage = math.floor(damage + 0.5)
+
+    return damage, isCritical, multiplier
 end
 
 -- Update
@@ -247,13 +275,17 @@ function Canon:update(dt, stage)
         then
             self.pebbleSpawned = true
 
+            local damage, isCritical, multiplier = self:rollPebbleDamage()
+
             projectileData = {
                 x = self.x + self.facing * 70,
-                y = self.y - 105,
+                y = self.y - 80,
                 direction = self.facing,
                 speed = self.pebble.speed,
                 range = self.pebble.range,
-                damage = self.pebble.damage
+                damage = damage,
+                isCritical = isCritical,
+                damageMultiplier = multiplier
             }
         end
 

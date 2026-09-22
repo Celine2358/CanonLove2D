@@ -1,12 +1,18 @@
 local Camera = {}
 Camera.__index = Camera
 
+-- 카메라 객체를 새로 만드는 생성자 함수
 function Camera.new(width, height)
+
+    -- 빈 테이블 {}을 만들고 위에서 정의한 Camera 메타테이블을 연결하여
+    -- 새로운 카메라 인스턴스를 생성한다
     local self = setmetatable({}, Camera)
 
+    -- 카메라의 현재 월드 좌표를 0, 0으로 초기화
     self.x = 0
     self.y = 0
 
+    -- 카메라가 보여줄 화면의 크기, 카논을 따라가는 속도의 가중치
     self.width = width
     self.height = height
     self.followSpeed = 8

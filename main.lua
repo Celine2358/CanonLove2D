@@ -92,7 +92,9 @@ end
 
 -- 고대의 마법사 쿠로 UI
 local function drawBossBar()
-    if not kuro then
+    
+    if not kuro or kuro.state == "dead"
+    then
         return
     end
 
@@ -187,7 +189,7 @@ function love.update(dt)
         projectile:update(dt, stage)
 
         -- 쿠로와 충돌
-        if projectile.state == "fly" and not kuro.dead then
+        if projectile.state == "fly" and kuro.state == "alive" then
             if overlap(projectile:getHitbox(), kuro:getHitbox()) then
                 kuro:takeDamage(projectile.damage)
 

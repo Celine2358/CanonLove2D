@@ -41,7 +41,7 @@ function Canon.new(startX, startY)
 
     -- Combat Stats
     -- 기본 마력 10
-    self.magicPower = 10
+    self.magicPower = 1000
 
     -- 기본 크리티컬 확률 20%, 크리티컬 데미지 50%
     self.critChance = 0.20

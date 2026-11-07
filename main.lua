@@ -178,7 +178,7 @@ function love.update(dt)
     end
 
     -- 쿠로 행동
-    kuro:update(dt)
+    kuro:update(dt, stage, canon)
 
     -- Projectile
     -- 뒤에서부터 삭제하면 table.remove가 안전
@@ -242,6 +242,11 @@ function love.keypressed(key)
     -- 종료
     if key == "escape" then
         love.event.quit()
+    end
+
+    -- T: 쿠로 텔레포트 강제 시험
+    if key == "t" then
+        kuro:startTeleport()
     end
 end
 

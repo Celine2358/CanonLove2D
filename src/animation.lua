@@ -4,54 +4,66 @@ Animation.__index = Animation
 function Animation.new(config)
     local self = setmetatable({}, Animation)
 
-    self.frames = {}
+    -- 기존 이미지 프레임 재사용 또는 새로 로드
+    if config.frames then
+        self.frames = config.frames
+    else
+        self.frames = {}
 
-    -- canon_stand_1.png ~ canon_stand_12.png 형태로 로드
-    for c = 1, config.frameCount do
-        local path = string.format("%s/%s_%d.png", config.folder, config.prefix, c)
+        for i = 1, config.frameCount do
+            local path = string.format(
+                "%s/%s_%d.png",
+                config.folder,
+                config.prefix,
+                i
+            )
 
-        self.frames[c] = love.graphics.newImage(path)
+            self.frames[i] = love.graphics.newImage(path)
+        end
     end
 
     self.frameTime = config.frameTime or 0.1
-
-    -- ~=는 !=와 같다
     self.loop = config.loop ~= false
 
-    self.currentFrame = 1
+    -- 정방향 +1, 역방향 -1
+    -- reverse false는 1 -> 2 -> ...
+    -- reverse true는 13 -> 12 -> ...
+    self.direction = config.reverse and -1 or 1
+
     self.timer = 0
     self.finished = false
+
+    -- 역재생이면 마지막 프레임에서 시작
+    self.currentFrame = self.direction == 1 and 1 or #self.frames
+
     return self
 end
 
--- Love2D 게임에서 시간의 흐름 (dt)에 따라 애니메이션의 다음 장면(프레임)을 계산하는 함수
+-- 프레임 재생
 function Animation:update(dt)
-    -- 예외 처리 (애니메이션 재생이 끝난 경우)
-    if self.finished then
+    if self.finished or #self.frames <= 1 then
         return
     end
 
-    -- 1프레임 애니메이션은 갱신 불필요
-    -- #self.frames는 애니메이션에 포함된 총 프레임 개수
-    if #self.frames <= 1 then
-        return
-    end
-
-    -- 타이머 누적
     self.timer = self.timer + dt
 
-    -- 프레임 전환 판단
-    -- if 대신 while을 사용한 이유: 컴퓨터가 순간적으로 버벅여서 dt가 매우 크게 들어왔을 때
-    -- 지나간 여러 프레임을 한 번에 건너뛰기 위해
-        while self.timer >= self.frameTime do
+    while self.timer >= self.frameTime do
         self.timer = self.timer - self.frameTime
-        self.currentFrame = self.currentFrame + 1
 
-        if self.currentFrame > #self.frames then
+        -- direction에 따라 증가 또는 감소
+        self.currentFrame = self.currentFrame + self.direction
+
+        local outOfRange =
+            self.currentFrame < 1
+            or self.currentFrame > #self.frames
+
+        if outOfRange then
             if self.loop then
-                self.currentFrame = 1
+                self.currentFrame =
+                    self.direction == 1
+                    and 1 or #self.frames
             else
-                self.currentFrame = #self.frames
+                self.currentFrame = math.max(1, math.min(#self.frames, self.currentFrame))
                 self.finished = true
                 break
             end
@@ -59,14 +71,16 @@ function Animation:update(dt)
     end
 end
 
--- 현재 프레임의 이미지 반환
+-- 현재 이미지 반환
 function Animation:getImage()
     return self.frames[self.currentFrame]
 end
 
--- 애니메이션 초기화
+-- 처음부터 재생
 function Animation:reset()
-    self.currentFrame = 1
+    self.currentFrame =
+        self.direction == 1 and 1 or #self.frames
+
     self.timer = 0
     self.finished = false
 end
